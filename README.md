@@ -1,4 +1,4 @@
-# api-fetch
+# Snuffles
 
 > A wrapper around the native fetch function, returning the response body as a camelCased object
 
