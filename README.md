@@ -3,34 +3,47 @@
 > A wrapper around the native fetch function, returning the response body as a camelCased object
 
 ## Todo
-- [ ] Documentation
+- [ x ] Documentation
 - [ ] Testing
 - [ ] Use throughout different projects
 - [ ] Tidy up 
-- [ ] Publish private for railslove organisation
-- [ ] Publish for real
+- [ ] Publish
 
-## Install
+## Installation
 
 ```bash
-npm install --save api-fetch
+npm install --save snuffles
 ```
 
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
+import snuffles from 'snuffles'
 
-import MyComponent from 'api-fetch'
-
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
+export default function myApiWrapper() {
+  const options = {
+    query: {
+      'name': 'sirius',
+      'animal': 'dog'
+    },
+    headers: {
+      'X-AUTH-TOKEN': 'token'
+    }
   }
+
+  snuffles('http://example.com/users', options)
 }
 ```
+
+As of now, snuffles consist of one function to make `GET` requests.
+
+**`snuffles(url, options)`**
+* `url`: The url to make the request against
+* `options`: Takes multiple options
+  * `query`: An object to build a query string of
+  * `headers`: An object of headers to set for the request
+
+Snuffles will return the response body as a camelCased object.
 
 ## License
 
