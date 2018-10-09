@@ -1,7 +1,7 @@
 import changeCaseObject from 'change-case-object'
 import qs from 'query-string'
 
-export default function fetchApi(url, options = {}) {
+export default function snuffles(url, options = {}) {
   let queryString = options.query ? `?${qs.stringify(options.query)}` : ''
 
   return fetch(`/api/${url}${queryString}`, {
