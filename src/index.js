@@ -1,22 +1,18 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import changeCaseObject from 'change-case-object'
+import qs from 'query-string'
 
-import styles from './styles.css'
+export default function apiFetch(url, options = {}) {
+  let queryString = options.query ? `?${qs.stringify(options.query)}` : ''
 
-export default class ExampleComponent extends Component {
-  static propTypes = {
-    text: PropTypes.string
-  }
-
-  render() {
-    const {
-      text
-    } = this.props
-
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
-  }
+  return fetch(`/api/${url}${queryString}`, {
+    headers: {
+      ...options.headers
+    }
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('API Response was not ok', error)
+      return res
+    })
+    .then(res => res.json())
+    .then(json => changeCaseObject.camelCase(json))
 }

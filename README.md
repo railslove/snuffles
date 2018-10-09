@@ -1,8 +1,14 @@
 # api-fetch
 
-> Wrapper around the native fetch function, returning a camelCased response
+> A wrapper around the native fetch function, returning the response body as a camelCased object
 
-[![NPM](https://img.shields.io/npm/v/api-fetch.svg)](https://www.npmjs.com/package/api-fetch) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+## Todo
+- [ ] Documentation
+- [ ] Testing
+- [ ] Use throughout different projects
+- [ ] Tidy up 
+- [ ] Publish private for railslove organisation
+- [ ] Publish for real
 
 ## Install
 
@@ -28,4 +34,4 @@ class Example extends Component {
 
 ## License
 
-MIT © [](https://github.com/)
+MIT © [railslove](https://github.com/railslove)
