@@ -3,10 +3,11 @@
 > A wrapper around the native fetch function, returning the response body as a camelCased object
 
 ## Todo
-- [ x ] Documentation
+- [x] Documentation
 - [ ] Testing
 - [ ] Use throughout different projects
-- [ ] Tidy up 
+- [ ] Tidy up
+- [ ] a e s t e t h i c logo~~
 - [ ] Publish
 
 ## Installation
