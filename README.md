@@ -4,7 +4,8 @@
 
 ## Todo
 - [x] Documentation
-- [ ] Testing
+- [x] Testing
+- [ ] Rewrite as a class
 - [ ] Use throughout different projects
 - [ ] Tidy up
 - [ ] a e s t e t h i c logo~~
