@@ -68,8 +68,9 @@ export default class Snuffles {
       ? `?${qs.stringify(options.query)}` 
       : ''
 
+    const { query, ...requestOptions } = fullOptions
     return fetch(`${url}${queryString}`, {
-      ...fullOptions
+      ...requestOptions
     })
       .then(res => {
         if (!res.ok) throw new Error('API Response was not ok', res)
