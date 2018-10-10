@@ -140,6 +140,30 @@ describe('snuffles', () => {
         })
       })
 
+      it('converts the request body to snake_case', () => {
+        const options = {
+          body: {
+            userName: 'Sirius',
+            stillAlive: false  
+          }
+        }
+
+        const transformedOptions = {
+          body: {
+            user_name: 'Sirius',
+            still_alive: false  
+          }
+        }
+
+        global.fetch.mockResponseOnce(JSON.stringify({}))
+        api.request(requestPath, options)
+        expect(global.fetch).toHaveBeenCalledWith(
+          requestUrl,
+          expect.objectContaining(transformedOptions)
+          )
+
+      })
+
       describe('querystring', () => {
         const options = {
           query: {

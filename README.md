@@ -1,6 +1,9 @@
 # Snuffles
 
-> A wrapper around the native fetch function, returning the response body as a camelCased object
+> A wrapper around the native fetch function, providing a more convenient way to use it
+
+At its core, Snuffles is just a very slim wrapper around the [native `fetch` function](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch). It allows for setting a base url and default options for your request, provides some wrappers around some of the more frequently used HTTP methods and takes care of all casing. You send camelCased Objects in, you get camelCased objects out.
+
 
 ## Installation
 

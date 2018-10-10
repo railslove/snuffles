@@ -67,6 +67,11 @@ export default class Snuffles {
       : ''
 
     const { query, ...requestOptions } = fullOptions
+
+    if (requestOptions.body) {
+      requestOptions.body = changeCaseObject.snakeCase(requestOptions.body)
+    }
+    
     return fetch(`${url}${queryString}`, {
       ...requestOptions
     })
