@@ -1,5 +1,3 @@
-'use strict'
-
 import changeCaseObject from 'change-case-object'
 import qs from 'query-string'
 import merge from 'deepmerge'
@@ -64,7 +62,7 @@ export default class Snuffles {
       throw new Error('A valid HTTP request method must be used')
     }
 
-    let queryString = fullOptions.query 
+    const queryString = fullOptions.query 
       ? `?${qs.stringify(options.query)}` 
       : ''
 
