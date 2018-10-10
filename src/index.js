@@ -27,20 +27,24 @@ export default class Snuffles {
     this.defaultOptions = defaultOptions
   }
 
-  _fullUrl(url) {
-    return this.baseUrl ? this.baseUrl + url : url
+  fullUrl(path) {
+    return this.baseUrl + path
   }
 
-  _validMethod(method) {
+  validMethod(method) {
     return ALLOWED_REQUEST_METHODS.includes(method.toString())
   }
 
-  // TODO: Documentation
-  request(url, options = {}) {
-    const fullUrl = this._fullUrl(url)
+  /**
+   * @param  {string} path the path of the request
+   * @param  {Object} options optional options, sepcific for this single request
+   * @return {Object} res camelCased response 
+   */
+  request(path, options = {}) {
+    const url = this.fullUrl(path)
     const fullOptions = merge(this.defaultOptions, options)
 
-    if(!fullOptions.method || !this._validMethod(fullOptions.method)){
+    if(!fullOptions.method || !this.validMethod(fullOptions.method)){
       throw new Error('A valid HTTP request method must be used')
     }
 
@@ -48,7 +52,7 @@ export default class Snuffles {
       ? `?${qs.stringify(options.query)}` 
       : ''
 
-    return fetch(`${fullUrl}${queryString}`, {
+    return fetch(`${url}${queryString}`, {
       ...fullOptions
     })
       .then(res => {
@@ -59,19 +63,3 @@ export default class Snuffles {
       .then(json => changeCaseObject.camelCase(json))
     }
 }
-
-// export default function snuffles(url, options = {}) {
-//   let queryString = options.query ? `?${qs.stringify(options.query)}` : ''
-
-//   return fetch(`${url}${queryString}`, {
-//     headers: {
-//       ...options.headers
-//     }
-//   })
-//     .then(res => {
-//       if (!res.ok) throw new Error('API Response was not ok', res)
-//       return res
-//     })
-//     .then(res => res.json())
-//     .then(json => changeCaseObject.camelCase(json))
-// }
