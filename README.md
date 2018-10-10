@@ -28,21 +28,21 @@ export default function myApiWrapper() {
 
 To create a new instance of Snuffles:
 ```js
-const api = new Snuffles(baseUrl[, {defaultOptions}])
+const api = new Snuffles(baseUrl[, defaultOptions])
 ```
 * __`baseUrl`__: The base url of the API you want to make requests agains
-* __`defaultOptions`__ (_optional_): A set of default options you want to sent in every request, e.g. headers for authentication
+* __`defaultOptions`__ (_optional_): An Object, containing a set of default options you want to sent in every request, e.g. headers for authentication
 
 As of now, Snuffles has wrappers for 5 request methods:
-* `get(path[, {options}])`
-* `post(path[, {options}])`
-* `put(path[, {options}])`
-* `patch(path[, {options}])`
-* `delete(path[, {options}])`
+* `get(path[, options])`
+* `post(path[, options])`
+* `put(path[, options])`
+* `patch(path[, options])`
+* `delete(path[, options])`
 
 Where
 * __`path`__: the path you want that specific request to go to
-* __`options`__ (_optional_): options you want to merge with the base options on this specific request. Options passed to the wrapper functions are deep-merged, but will override identical keys.
+* __`options`__ (_optional_): An Object containing a set of options you want to merge with the base options on this specific request. Options passed to the wrapper functions are deep-merged, but will override identical keys.
 
 ### Options
 Snuffles accepts all options that fetch accepts as its `init` parameter ([docs](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)). In fact, snuffles does not validate the options that are passed at all.  
