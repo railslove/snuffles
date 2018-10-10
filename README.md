@@ -69,12 +69,12 @@ const user = api.get('/user')
 Snuffles will return the response body as a camelCased object for you to work with.
 
 ## License
+
+MIT © [railslove](https://github.com/railslove)
+
 <p align="center">
-  ![](logo_rl.svg =250x)
+  <img src="logo_rl.svg" width="500px" >
 </p>
 <p align="center">
   Made with 💚 in Cologne
 </p>
-
-
-MIT © [railslove](https://github.com/railslove)
