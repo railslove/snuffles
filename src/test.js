@@ -40,7 +40,7 @@ describe('snuffles', () => {
 
       beforeEach(() => {
         global.fetch.resetMocks()
-        api = new Snuffles(baseUrl, )
+        api = new Snuffles(baseUrl)
       })
 
       it('throws an error if no valid method is set in options', () => {
@@ -168,6 +168,49 @@ describe('snuffles', () => {
           )
         })
       })
+    })
+  })
+
+  describe('wrappers', () => {
+    let api
+    beforeEach(() => {
+      global.fetch.resetMocks()
+      api = new Snuffles(baseUrl,{ method: 'GET' })
+    })
+
+    it('get', () => {
+      api.request = jest.fn()
+
+      api.get(requestPath)
+      expect(api.request).toHaveBeenCalledTimes(1)
+    })
+
+    it('post', () => {
+      api.request = jest.fn()
+
+      api.post(requestPath)
+      expect(api.request).toHaveBeenCalledTimes(1)
+    })
+
+    it('put', () => {
+      api.request = jest.fn()
+
+      api.put(requestPath)
+      expect(api.request).toHaveBeenCalledTimes(1)
+    })
+
+    it('patch', () => {
+      api.request = jest.fn()
+
+      api.patch(requestPath)
+      expect(api.request).toHaveBeenCalledTimes(1)
+    })
+
+    it('delete', () => {
+      api.request = jest.fn()
+
+      api.delete(requestPath)
+      expect(api.request).toHaveBeenCalledTimes(1)
     })
   })
 })

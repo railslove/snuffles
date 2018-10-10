@@ -6,13 +6,9 @@ import merge from 'deepmerge'
 
 const ALLOWED_REQUEST_METHODS = [
   'GET',
-  'HEAD',
   'POST',
   'PUT',
   'DELETE',
-  'CONNTECT',
-  'OPTIONS',
-  'TRACE',
   'PATCH'
 ]
 
@@ -25,6 +21,26 @@ export default class Snuffles {
 
     this.baseUrl = baseUrl
     this.defaultOptions = defaultOptions
+  }
+
+  get(path, options = {}) {
+    return this.request(path, { ...options, method: 'GET'})
+  }
+
+  post(path, options = {}) {
+    return this.request(path, { ...options, method: 'POST'})
+  }
+
+  put(path, options = {}) {
+    return this.request(path, { ...options, method: 'PUT'})
+  }
+
+  patch(path, options = {}) {
+    return this.request(path, { ...options, method: 'PATCH'})
+  }
+
+  delete(path, options = {}) {
+    return this.request(path, { ...options, method: 'DELETE'})
   }
 
   fullUrl(path) {
