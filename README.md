@@ -2,7 +2,7 @@
   <img src="logo.jpg">
 </p>
 
-> A wrapper around the native fetch function, providing a more convenient way to use it
+> A wrapper around the native fetch function, providing a more convenient way to use it for JSON requests
 
 ![](https://travis-ci.org/railslove/snuffles.svg?branch=master)
 ![](https://img.shields.io/github/license/railslove/snuffles.svg)
@@ -79,8 +79,53 @@ const user = api.get('/user')
 ### Casing
 Snuffles will take care of transforming the casing of response and request
 bodies, so that you can pass in a camelCased object as a request body (passed
-via `options.body`) and get out the response body as a camelCased object as
+via `options.body`) and get out the response as a camelCased object as
 well.
+
+#### Response bodies
+Assuming `GET https://your-api/users/1` would return a response with a body of
+
+```json
+{
+  "user_name": "John Doe",
+  "paid_user": false
+}
+```
+If you make this request with snuffles, it would look like
+
+```js
+const api = new Snuffles('https://your-api')
+
+const res = api.get('/users/1')
+
+// res =>
+// {
+//   userName: "John Doe",
+//   paidUser: false
+// }
+//
+```
+
+#### Request bodies:
+
+```js
+const api = new Snuffles('http://base-url.tld')
+
+const options = {
+  body: {
+    'userName': 'sirius',
+    'paidUser': true
+  }
+}
+
+api.post('/users')
+
+// sends a request to 'http://base-url.tld/users', with the body
+// {
+//    user_name: 'sirius',
+//    paid_user: true
+// }
+```
 
 ## License
 
