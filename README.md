@@ -71,7 +71,7 @@ const options = {
   }
 }
 
-const user = api.get('/user')
+const user = api.get('/user', options)
 
 // => fetch('http://base-url.tld/user?name=sirius&animal=dog')
 ```
