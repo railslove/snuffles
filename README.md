@@ -1,6 +1,6 @@
 # Snuffles
 
-<p align="center">
+<p align="center" style="baclground-color: #FDEAD6">
   <img src="logo.jpg">
 </p>
 
