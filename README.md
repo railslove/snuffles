@@ -24,7 +24,7 @@ npm install --save snuffles
 import Snuffles from 'snuffles'
 
 export default function myApiWrapper() {
-  cosnt defaultOptions = {
+  const defaultOptions = {
     headers: {
       'X-AUTH-TOKEN': 'my-secret-token'
     }
