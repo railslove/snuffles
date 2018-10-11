@@ -79,7 +79,7 @@ const user = api.get('/user')
 ### Casing
 Snuffles will take care of transforming the casing of response and request
 bodies, so that you can pass in a camelCased object as a request body (passed
-via `options.body`) and get out the response as a camelCased object as
+via `options.body`) and get out the response body as a camelCased object as
 well.
 
 #### Response bodies
