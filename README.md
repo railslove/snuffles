@@ -1,7 +1,7 @@
 # Snuffles
 
 <p align="center">
-  ![]('logo.jpg')
+  <img src="logo.jpg">
 </p>
 
 > A wrapper around the native fetch function, providing a more convenient way to use it
