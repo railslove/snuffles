@@ -118,7 +118,7 @@ const options = {
   }
 }
 
-api.post('/users')
+api.post('/users', options)
 
 // sends a request to 'http://base-url.tld/users', with the body
 // {
