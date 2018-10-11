@@ -6,8 +6,8 @@
 
 ![](https://travis-ci.org/railslove/snuffles.svg?branch=master)
 ![](https://img.shields.io/github/license/railslove/snuffles.svg)
-![](https://img.shields.io/github/release/railslove/snuffles.svg)
-![](https://img.shields.io/npm/v/snuffels.svg)
+![](https://img.shields.io/github/tag/railslove/snuffles.svg)
+![](https://img.shields.io/npm/v/snuffles.svg)
 
 At its core, Snuffles is just a very slim wrapper around the [native `fetch` function](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch). It allows for setting a base url and default options for your request, provides some wrappers around some of the more frequently used HTTP methods and takes care of all casing. You send camelCased objects in, you get camelCased objects out.
 
