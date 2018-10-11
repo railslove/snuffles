@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "description": "A wrapper around the native fetch function, returning the response body as a camelCased object",
   "author": "railslove",
-  "private": true,
   "license": "MIT",
   "repository": "railslove/snuffles",
   "main": "dist/index.js",
