@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png">
+  <img src="logo.jpg">
 </p>
 
 > A wrapper around the native fetch function, providing a more convenient way to use it
