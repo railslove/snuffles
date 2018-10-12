@@ -11,7 +11,6 @@ const ALLOWED_REQUEST_METHODS = [
 ]
 
 export default class Snuffles {
-
   constructor(baseUrl, defaultOptions = {}) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
@@ -22,23 +21,23 @@ export default class Snuffles {
   }
 
   get(path, options = {}) {
-    return this.request(path, { ...options, method: 'GET'})
+    return this.request(path, { ...options, method: 'GET' })
   }
 
   post(path, options = {}) {
-    return this.request(path, { ...options, method: 'POST'})
+    return this.request(path, { ...options, method: 'POST' })
   }
 
   put(path, options = {}) {
-    return this.request(path, { ...options, method: 'PUT'})
+    return this.request(path, { ...options, method: 'PUT' })
   }
 
   patch(path, options = {}) {
-    return this.request(path, { ...options, method: 'PATCH'})
+    return this.request(path, { ...options, method: 'PATCH' })
   }
 
   delete(path, options = {}) {
-    return this.request(path, { ...options, method: 'DELETE'})
+    return this.request(path, { ...options, method: 'DELETE' })
   }
 
   fullUrl(path) {
@@ -52,18 +51,18 @@ export default class Snuffles {
   /**
    * @param  {string} path the path of the request
    * @param  {Object} options optional options, sepcific for this single request
-   * @return {Object} res camelCased response 
+   * @return {Object} res camelCased response
    */
   request(path, options = {}) {
     const url = this.fullUrl(path)
     const fullOptions = merge(this.defaultOptions, options)
 
-    if(!fullOptions.method || !this.validMethod(fullOptions.method)){
+    if (!fullOptions.method || !this.validMethod(fullOptions.method)) {
       throw new Error('A valid HTTP request method must be used')
     }
 
-    const queryString = fullOptions.query 
-      ? `?${qs.stringify(options.query)}` 
+    const queryString = fullOptions.query
+      ? `?${qs.stringify(options.query)}`
       : ''
 
     const { query, ...requestOptions } = fullOptions
@@ -71,7 +70,7 @@ export default class Snuffles {
     if (requestOptions.body) {
       requestOptions.body = changeCaseObject.snakeCase(requestOptions.body)
     }
-    
+
     return fetch(`${url}${queryString}`, {
       ...requestOptions
     })
@@ -81,5 +80,5 @@ export default class Snuffles {
       })
       .then(res => res.json())
       .then(json => changeCaseObject.camelCase(json))
-    }
+  }
 }
