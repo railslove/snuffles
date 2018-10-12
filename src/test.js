@@ -49,16 +49,16 @@ describe('snuffles', () => {
         expect(() => api.request(requestPath)).toThrow()
       })
     })
-      
+
     describe('with defaults', () => {
       let api
       beforeEach(() => {
         global.fetch.resetMocks()
         api = new Snuffles(
           baseUrl,
-          { 
+          {
             method: 'GET',
-            headers: { 'X-AUTH-TOKEN': 'token' },
+            headers: { 'X-AUTH-TOKEN': 'token' }
           }
         )
       })
@@ -144,14 +144,14 @@ describe('snuffles', () => {
         const options = {
           body: {
             userName: 'Sirius',
-            stillAlive: false  
+            stillAlive: false
           }
         }
 
         const transformedOptions = {
           body: {
             user_name: 'Sirius',
-            still_alive: false  
+            still_alive: false
           }
         }
 
@@ -160,8 +160,7 @@ describe('snuffles', () => {
         expect(global.fetch).toHaveBeenCalledWith(
           requestUrl,
           expect.objectContaining(transformedOptions)
-          )
-
+        )
       })
 
       describe('querystring', () => {
@@ -199,7 +198,7 @@ describe('snuffles', () => {
     let api
     beforeEach(() => {
       global.fetch.resetMocks()
-      api = new Snuffles(baseUrl,{ method: 'GET' })
+      api = new Snuffles(baseUrl, { method: 'GET' })
     })
 
     it('get', () => {
