@@ -76,7 +76,12 @@ export default class Snuffles {
       ...requestOptions
     })
       .then(res => {
-        if (!res.ok) throw new Error('API Response was not ok', res)
+        if (!res.ok) {
+          const error = new Error('API response was not ok.')
+          error.response = res
+          throw error
+        }
+
         return res
       })
       .then(res => res.json())
