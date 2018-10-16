@@ -148,19 +148,14 @@ describe('snuffles', () => {
           }
         }
 
-        const transformedOptions = {
-          body: {
-            user_name: 'Sirius',
-            still_alive: false
-          }
-        }
+        const expectedBody = { user_name: 'Sirius', still_alive: false }
 
         global.fetch.mockResponseOnce(JSON.stringify({}))
         api.request(requestPath, options)
-        expect(global.fetch).toHaveBeenCalledWith(
-          requestUrl,
-          expect.objectContaining(transformedOptions)
-        )
+        const jsonRequestBody = JSON.parse(global.fetch.mock.calls[0][1].body)
+
+        expect(jsonRequestBody).toEqual(expectedBody)
+        expect(global.fetch).toHaveBeenCalledWith(requestUrl, expect.anything())
       })
 
       describe('querystring', () => {
