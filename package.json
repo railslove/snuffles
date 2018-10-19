@@ -59,6 +59,6 @@
   "dependencies": {
     "deepmerge": "2.2.1",
     "change-case-object": "2.0.0",
-    "query-string": "6.2.0"
+    "query-string": "4.1.0"
   }
 }
