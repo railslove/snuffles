@@ -1,6 +1,6 @@
 {
   "name": "snuffles",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A wrapper around the native fetch function, returning the response body as a camelCased object",
   "author": "railslove",
   "license": "MIT",
