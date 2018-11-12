@@ -11,7 +11,6 @@
 
 At its core, Snuffles is just a very slim wrapper around the [native `fetch` function](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch). It allows for setting a base url and default options for your request, provides some wrappers around some of the more frequently used HTTP methods and takes care of all casing. You send camelCased objects in, you get camelCased objects out.
 
-
 ## Installation
 
 ```bash
@@ -31,34 +30,41 @@ export default function myApiWrapper() {
   }
 
   const api = new Snuffles('http://base-url.tld', defaultOptions)
-  
+
   const user = api.get('/user')
 }
 ```
 
 To create a new instance of Snuffles:
+
 ```js
-const api = new Snuffles(baseUrl[, defaultOptions])
+const api = new Snuffles(baseUrl[, defaultOptions, bodyFormat])
 ```
-* __`baseUrl`__: The base url of the API you want to make requests agains
-* __`defaultOptions`__ (_optional_): An Object, containing a set of default options you want to sent in every request, e.g. headers for authentication
+
+- **`baseUrl`**: The base url of the API you want to make requests agains
+- **`defaultOptions`** (_optional_): An Object, containing a set of default options you want to sent in every request, e.g. headers for authentication
+- **`bodyForma`** (_optional_): A string representing the format in which a request body should be sent out. Accepts `SNAKE_CASE` (default), `CAMEL_CASE` and `PARAM_CASE`.
 
 As of now, Snuffles has wrappers for 5 request methods:
-* `get(path[, options])`
-* `post(path[, options])`
-* `put(path[, options])`
-* `patch(path[, options])`
-* `delete(path[, options])`
+
+- `get(path[, options])`
+- `post(path[, options])`
+- `put(path[, options])`
+- `patch(path[, options])`
+- `delete(path[, options])`
 
 Where
-* __`path`__: the path you want that specific request to go to
-* __`options`__ (_optional_): An Object containing a set of options you want to merge with the base options on this specific request. Options passed to the wrapper functions are deep-merged, but will override identical keys.
+
+- **`path`**: the path you want that specific request to go to
+- **`options`** (_optional_): An Object containing a set of options you want to merge with the base options on this specific request. Options passed to the wrapper functions are deep-merged, but will override identical keys.
 
 ### Options
-Snuffles accepts all options that fetch accepts as its `init` parameter ([docs](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)). In fact, snuffles does not validate the options that are passed at all.  
+
+Snuffles accepts all options that fetch accepts as its `init` parameter ([docs](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)). In fact, snuffles does not validate the options that are passed at all.
 
 ### Using querystrings
-Snuffles does support the setting of querystrings via its options parameter. You can pass in a `query` object with the desired key-value-pairs.  
+
+Snuffles does support the setting of querystrings via its options parameter. You can pass in a `query` object with the desired key-value-pairs.
 For example:
 
 ```js
@@ -66,8 +72,8 @@ const api = new Snuffles('http://base-url.tld')
 
 const options = {
   query: {
-    'name': 'sirius',
-    'animal': 'dog'
+    name: 'sirius',
+    animal: 'dog'
   }
 }
 
@@ -77,12 +83,14 @@ const user = api.get('/user', options)
 ```
 
 ### Casing
+
 Snuffles will take care of transforming the casing of response and request
 bodies, so that you can pass in a camelCased object as a request body (passed
 via `options.body`) and get out the response body as a camelCased object as
 well.
 
 #### Response bodies
+
 Assuming `GET https://your-api/users/1` would return a response with a body of
 
 ```json
@@ -91,6 +99,7 @@ Assuming `GET https://your-api/users/1` would return a response with a body of
   "paid_user": false
 }
 ```
+
 If you make this request with snuffles, it would look like
 
 ```js
@@ -113,8 +122,8 @@ const api = new Snuffles('http://base-url.tld')
 
 const options = {
   body: {
-    'userName': 'sirius',
-    'paidUser': true
+    userName: 'sirius',
+    paidUser: true
   }
 }
 
