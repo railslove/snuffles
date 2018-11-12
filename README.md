@@ -38,12 +38,12 @@ export default function myApiWrapper() {
 To create a new instance of Snuffles:
 
 ```js
-const api = new Snuffles(baseUrl[, defaultOptions, bodyFormat])
+const api = new Snuffles(baseUrl[, defaultOptions, bodyKeyCase])
 ```
 
 - **`baseUrl`**: The base url of the API you want to make requests agains
 - **`defaultOptions`** (_optional_): An Object, containing a set of default options you want to sent in every request, e.g. headers for authentication
-- **`bodyForma`** (_optional_): A string representing the format in which a request body should be sent out. Accepts `SNAKE_CASE` (default), `CAMEL_CASE` and `PARAM_CASE`.
+- **`bodyKeyCase`** (_optional_): A string representing the casing in which a request body keys should be sent out. Accepts `SNAKE_CASE` (default), `CAMEL_CASE` and `PARAM_CASE`.
 
 As of now, Snuffles has wrappers for 5 request methods:
 

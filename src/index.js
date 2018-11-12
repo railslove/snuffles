@@ -4,7 +4,7 @@ import merge from 'deepmerge'
 
 const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
-const BODY_FORMATTING_OPTIONS = {
+const BODY_KEY_CASE_OPTIONS = {
   SNAKE_CASE: 'SNAKE_CASE',
   CAMEL_CASE: 'CAMEL_CASE',
   PARAM_CASE: 'PARAM_CASE'
@@ -14,19 +14,19 @@ export default class Snuffles {
   constructor(
     baseUrl,
     defaultOptions = {},
-    bodyFormat = BODY_FORMATTING_OPTIONS.SNAKE_CASE
+    bodyKeyCase = BODY_KEY_CASE_OPTIONS.SNAKE_CASE
   ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
-    if (Object.values(BODY_FORMATTING_OPTIONS).indexOf(bodyFormat) < 0) {
+    if (Object.values(BODY_KEY_CASE_OPTIONS).indexOf(bodyKeyCase) < 0) {
       throw new Error('This formatting option is not allowed.')
     }
 
     this.baseUrl = baseUrl
     this.defaultOptions = defaultOptions
-    this.bodyFormat = bodyFormat
+    this.bodyKeyCase = bodyKeyCase
   }
 
   get(path, options = {}) {
@@ -98,12 +98,12 @@ export default class Snuffles {
   }
 
   formatBody(body) {
-    switch (this.bodyFormat) {
-      case BODY_FORMATTING_OPTIONS.CAMEL_CASE:
+    switch (this.bodyKeyCase) {
+      case BODY_KEY_CASE_OPTIONS.CAMEL_CASE:
         return changeCaseObject.camelCase(body)
-      case BODY_FORMATTING_OPTIONS.SNAKE_CASE:
+      case BODY_KEY_CASE_OPTIONS.SNAKE_CASE:
         return changeCaseObject.snakeCase(body)
-      case BODY_FORMATTING_OPTIONS.PARAM_CASE:
+      case BODY_KEY_CASE_OPTIONS.PARAM_CASE:
         return changeCaseObject.paramCase(body)
       default:
         return body
