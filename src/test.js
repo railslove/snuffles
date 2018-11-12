@@ -34,12 +34,12 @@ describe('snuffles', () => {
 
     it('sets the default body formatting', () => {
       const api = new Snuffles(baseUrl)
-      expect(api.bodyFormatting).toEqual('SNAKE_CASE')
+      expect(api.bodyFormat).toEqual('SNAKE_CASE')
     })
 
     it('sets the passed body formatting', () => {
       const api = new Snuffles(baseUrl, {}, 'CAMEL_CASE')
-      expect(api.bodyFormatting).toEqual('CAMEL_CASE')
+      expect(api.bodyFormat).toEqual('CAMEL_CASE')
     })
 
     it('does not set a forbidden body formatting', () => {
