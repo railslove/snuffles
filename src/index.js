@@ -14,19 +14,19 @@ export default class Snuffles {
   constructor(
     baseUrl,
     defaultOptions = {},
-    bodyFormatting = BODY_FORMATTING_OPTIONS.SNAKE_CASE
+    bodyFormat = BODY_FORMATTING_OPTIONS.SNAKE_CASE
   ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
-    if (Object.values(BODY_FORMATTING_OPTIONS).indexOf(bodyFormatting) < 0) {
+    if (Object.values(BODY_FORMATTING_OPTIONS).indexOf(bodyFormat) < 0) {
       throw new Error('This formatting option is not allowed.')
     }
 
     this.baseUrl = baseUrl
     this.defaultOptions = defaultOptions
-    this.bodyFormatting = bodyFormatting
+    this.bodyFormat = bodyFormat
   }
 
   get(path, options = {}) {
@@ -98,7 +98,7 @@ export default class Snuffles {
   }
 
   formatBody(body) {
-    switch (this.bodyFormatting) {
+    switch (this.bodyFormat) {
       case BODY_FORMATTING_OPTIONS.CAMEL_CASE:
         return changeCaseObject.camelCase(body)
       case BODY_FORMATTING_OPTIONS.SNAKE_CASE:
