@@ -2,22 +2,31 @@ import changeCaseObject from 'change-case-object'
 import qs from 'query-string'
 import merge from 'deepmerge'
 
-const ALLOWED_REQUEST_METHODS = [
-  'GET',
-  'POST',
-  'PUT',
-  'DELETE',
-  'PATCH'
-]
+const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+
+const BODY_FORMATTING_OPTIONS = {
+  SNAKE_CASE: 'SNAKE_CASE',
+  CAMEL_CASE: 'CAMEL_CASE',
+  PARAM_CASE: 'PARAM_CASE'
+}
 
 export default class Snuffles {
-  constructor(baseUrl, defaultOptions = {}) {
+  constructor(
+    baseUrl,
+    defaultOptions = {},
+    bodyFormatting = BODY_FORMATTING_OPTIONS.SNAKE_CASE
+  ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
+    if (Object.values(BODY_FORMATTING_OPTIONS).indexOf(bodyFormatting) < 0) {
+      throw new Error('This formatting option is not allowed.')
+    }
+
     this.baseUrl = baseUrl
     this.defaultOptions = defaultOptions
+    this.bodyFormatting = bodyFormatting
   }
 
   get(path, options = {}) {
@@ -68,8 +77,8 @@ export default class Snuffles {
     const { query, ...requestOptions } = fullOptions
 
     if (requestOptions.body) {
-      const snakeCasedBody = changeCaseObject.snakeCase(requestOptions.body)
-      requestOptions.body = JSON.stringify(snakeCasedBody)
+      const casedBody = this.formatBody(requestOptions.body)
+      requestOptions.body = JSON.stringify(casedBody)
     }
 
     return fetch(`${url}${queryString}`, {
@@ -86,5 +95,18 @@ export default class Snuffles {
       })
       .then(res => res.json())
       .then(json => changeCaseObject.camelCase(json))
+  }
+
+  formatBody(body) {
+    switch (this.bodyFormatting) {
+      case BODY_FORMATTING_OPTIONS.CAMEL_CASE:
+        return changeCaseObject.camelCase(body)
+      case BODY_FORMATTING_OPTIONS.SNAKE_CASE:
+        return changeCaseObject.snakeCase(body)
+      case BODY_FORMATTING_OPTIONS.PARAM_CASE:
+        return changeCaseObject.paramCase(body)
+      default:
+        return body
+    }
   }
 }

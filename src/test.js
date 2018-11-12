@@ -16,12 +16,11 @@ describe('snuffles', () => {
     })
 
     it('is valid without defaultOptions', () => {
-      const api = new Snuffles('http://www.example.com')
+      const api = new Snuffles(baseUrl)
       expect(api).toBeTruthy()
     })
 
     it('sets the baseUrl and default options', () => {
-      const baseUrl = 'http://www.example.com'
       const defaultOptions = {
         headers: {
           'X-AUTH-TOKEN': 'secret'
@@ -31,6 +30,20 @@ describe('snuffles', () => {
       const api = new Snuffles(baseUrl, defaultOptions)
       expect(api.baseUrl).toEqual(baseUrl)
       expect(api.defaultOptions).toEqual(defaultOptions)
+    })
+
+    it('sets the default body formatting', () => {
+      const api = new Snuffles(baseUrl)
+      expect(api.bodyFormatting).toEqual('SNAKE_CASE')
+    })
+
+    it('sets the passed body formatting', () => {
+      const api = new Snuffles(baseUrl, {}, 'CAMEL_CASE')
+      expect(api.bodyFormatting).toEqual('CAMEL_CASE')
+    })
+
+    it('does not set a forbidden body formatting', () => {
+      expect(() => new Snuffles(baseUrl, {}, 'SOME_CASE')).toThrow()
     })
   })
 
@@ -54,13 +67,10 @@ describe('snuffles', () => {
       let api
       beforeEach(() => {
         global.fetch.resetMocks()
-        api = new Snuffles(
-          baseUrl,
-          {
-            method: 'GET',
-            headers: { 'X-AUTH-TOKEN': 'token' }
-          }
-        )
+        api = new Snuffles(baseUrl, {
+          method: 'GET',
+          headers: { 'X-AUTH-TOKEN': 'token' }
+        })
       })
 
       it('makes a request to the given url', () => {
@@ -68,10 +78,7 @@ describe('snuffles', () => {
         api.request(requestPath)
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
-        expect(global.fetch).toHaveBeenCalledWith(
-          requestUrl,
-          expect.anything()
-        )
+        expect(global.fetch).toHaveBeenCalledWith(requestUrl, expect.anything())
       })
 
       it('merges the passed options with the defaultOptions', () => {
@@ -93,7 +100,10 @@ describe('snuffles', () => {
         api.request(requestPath, options)
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
-        expect(global.fetch).toHaveBeenCalledWith(requestUrl, expect.objectContaining(mergedOptions))
+        expect(global.fetch).toHaveBeenCalledWith(
+          requestUrl,
+          expect.objectContaining(mergedOptions)
+        )
       })
 
       it('merges the passed url with the baseUrl', () => {
@@ -127,10 +137,12 @@ describe('snuffles', () => {
       })
 
       it('returns the response body as a camelCased object', () => {
-        global.fetch.mockResponseOnce(JSON.stringify({
-          user_name: 'user',
-          secret_token: '123'
-        }))
+        global.fetch.mockResponseOnce(
+          JSON.stringify({
+            user_name: 'user',
+            secret_token: '123'
+          })
+        )
 
         api.request(requestPath).then(res => {
           expect(res).toMatchObject({
@@ -171,7 +183,9 @@ describe('snuffles', () => {
           api.request(requestPath, options)
 
           expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringMatching(/^.*\?([\w-]+(=[\w-]*)?(&[\w-]+(=[\w-]*)?)*)?$/),
+            expect.stringMatching(
+              /^.*\?([\w-]+(=[\w-]*)?(&[\w-]+(=[\w-]*)?)*)?$/
+            ),
             expect.anything()
           )
         })
@@ -186,49 +200,6 @@ describe('snuffles', () => {
           )
         })
       })
-    })
-  })
-
-  describe('wrappers', () => {
-    let api
-    beforeEach(() => {
-      global.fetch.resetMocks()
-      api = new Snuffles(baseUrl, { method: 'GET' })
-    })
-
-    it('get', () => {
-      api.request = jest.fn()
-
-      api.get(requestPath)
-      expect(api.request).toHaveBeenCalledTimes(1)
-    })
-
-    it('post', () => {
-      api.request = jest.fn()
-
-      api.post(requestPath)
-      expect(api.request).toHaveBeenCalledTimes(1)
-    })
-
-    it('put', () => {
-      api.request = jest.fn()
-
-      api.put(requestPath)
-      expect(api.request).toHaveBeenCalledTimes(1)
-    })
-
-    it('patch', () => {
-      api.request = jest.fn()
-
-      api.patch(requestPath)
-      expect(api.request).toHaveBeenCalledTimes(1)
-    })
-
-    it('delete', () => {
-      api.request = jest.fn()
-
-      api.delete(requestPath)
-      expect(api.request).toHaveBeenCalledTimes(1)
     })
   })
 })
