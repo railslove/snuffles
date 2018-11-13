@@ -92,6 +92,10 @@ export default class Snuffles {
         return res
       })
       .then(res => res.json())
-      .then(json => changeCaseObject.camelCase(json))
+      .then(json => {
+        const casedResponse = changeCaseObject.camelCase(json)
+        responseDebug(casedResponse)
+        return casedResponse
+      })
   }
 }
