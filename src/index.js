@@ -1,23 +1,25 @@
 import changeCaseObject from 'change-case-object'
+import MetaOptions from './MetaOptions'
 import qs from 'query-string'
 import merge from 'deepmerge'
 
-const ALLOWED_REQUEST_METHODS = [
-  'GET',
-  'POST',
-  'PUT',
-  'DELETE',
-  'PATCH'
-]
+const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+
+const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE' }
 
 export default class Snuffles {
-  constructor(baseUrl, defaultOptions = {}) {
+  constructor(
+    baseUrl,
+    defaultRequestOptions = {},
+    metaOptions = defaultMetaOptions
+  ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
     this.baseUrl = baseUrl
-    this.defaultOptions = defaultOptions
+    this.defaultRequestOptions = defaultRequestOptions
+    this.metaOptions = new MetaOptions(metaOptions)
   }
 
   get(path, options = {}) {
@@ -55,7 +57,7 @@ export default class Snuffles {
    */
   request(path, options = {}) {
     const url = this.fullUrl(path)
-    const fullOptions = merge(this.defaultOptions, options)
+    const fullOptions = merge(this.defaultRequestOptions, options)
 
     if (!fullOptions.method || !this.validMethod(fullOptions.method)) {
       throw new Error('A valid HTTP request method must be used')
@@ -68,8 +70,8 @@ export default class Snuffles {
     const { query, ...requestOptions } = fullOptions
 
     if (requestOptions.body) {
-      const snakeCasedBody = changeCaseObject.snakeCase(requestOptions.body)
-      requestOptions.body = JSON.stringify(snakeCasedBody)
+      const casedBody = this.formatBody(requestOptions.body)
+      requestOptions.body = JSON.stringify(casedBody)
     }
 
     return fetch(`${url}${queryString}`, {
@@ -86,5 +88,9 @@ export default class Snuffles {
       })
       .then(res => res.json())
       .then(json => changeCaseObject.camelCase(json))
+  }
+
+  formatBody(body) {
+    return this.metaOptions.getBodyKeyConverter()(body)
   }
 }
