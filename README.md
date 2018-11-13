@@ -162,7 +162,29 @@ api.post('/users', options)
 
 ## Logging
 
-The library uses [debug](https://github.com/visionmedia/debug) for logging. Install the `debug` library in your project and add `snuffles:requests`, `snuffles:responses`, or `snuffles:*` (for both) to your debug namespaces config (e.g. `DEBUG=snuffles:*`) in order to see Snuffles log entries appear in your logs. If the logs should get stored anywhere, be careful that you could be exposing sensitive information like passwords, API tokens, etc.
+For normal browser-based development the network tab in your browser's developer tools is probably all you need.
+
+If you should have custom logging requirements (e.g. if you work with React Native, where you cannot use the network tab in the remote React Native Debugger) you can pass in your custom logger function as an option to the 3rd argument of `Snuffles()`.
+
+Here is an example using the [debug](https://github.com/visionmedia/debug) library:
+
+```
+import createDebug from 'debug'
+const debug = createDebug('api')
+
+const apiClient = new Snuffles(
+  apiUrl,
+  { ... }
+  { logger: debug }
+)
+```
+
+The first argument of each log call is always the `type` of the log entry (either `'request'` or `'response'`), so you can use this to log them differently.  E.g. into separate logging namespaces:
+```
+{ logger: (type, ...data) => createDebug('api:${type}')(data) }
+```
+
+If the logs should get persisted/streamed to anywhere, be careful that you could be exposing sensitive information like passwords, API tokens, which are part of the logged HTTP requests.
 
 ## License
 

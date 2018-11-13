@@ -74,7 +74,7 @@ export default class Snuffles {
     }
 
     const urlWithQueryString = `${url}${queryString}`
-    this.log(urlWithQueryString, requestOptions)
+    this.log('request', urlWithQueryString, requestOptions)
     return fetch(urlWithQueryString, {
       ...requestOptions
     })
@@ -103,7 +103,7 @@ export default class Snuffles {
       )
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
-        this.log('response:', parsedResponse)
+        this.log('response', parsedResponse)
         return parsedResponse.body
       })
   }
