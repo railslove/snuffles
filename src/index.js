@@ -1,32 +1,25 @@
 import changeCaseObject from 'change-case-object'
+import MetaOptions from './MetaOptions'
 import qs from 'query-string'
 import merge from 'deepmerge'
 
 const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
-const BODY_KEY_CASE_OPTIONS = {
-  SNAKE_CASE: 'SNAKE_CASE',
-  CAMEL_CASE: 'CAMEL_CASE',
-  PARAM_CASE: 'PARAM_CASE'
-}
+const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE' }
 
 export default class Snuffles {
   constructor(
     baseUrl,
-    defaultOptions = {},
-    bodyKeyCase = BODY_KEY_CASE_OPTIONS.SNAKE_CASE
+    defaultRequestOptions = {},
+    metaOptions = { ...defaultMetaOptions }
   ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
-    if (Object.values(BODY_KEY_CASE_OPTIONS).indexOf(bodyKeyCase) < 0) {
-      throw new Error('This formatting option is not allowed.')
-    }
-
     this.baseUrl = baseUrl
-    this.defaultOptions = defaultOptions
-    this.bodyKeyCase = bodyKeyCase
+    this.defaultRequestOptions = defaultRequestOptions
+    this.metaOptions = new MetaOptions(metaOptions)
   }
 
   get(path, options = {}) {
@@ -64,7 +57,7 @@ export default class Snuffles {
    */
   request(path, options = {}) {
     const url = this.fullUrl(path)
-    const fullOptions = merge(this.defaultOptions, options)
+    const fullOptions = merge(this.defaultRequestOptions, options)
 
     if (!fullOptions.method || !this.validMethod(fullOptions.method)) {
       throw new Error('A valid HTTP request method must be used')
@@ -98,15 +91,6 @@ export default class Snuffles {
   }
 
   formatBody(body) {
-    switch (this.bodyKeyCase) {
-      case BODY_KEY_CASE_OPTIONS.CAMEL_CASE:
-        return changeCaseObject.camelCase(body)
-      case BODY_KEY_CASE_OPTIONS.SNAKE_CASE:
-        return changeCaseObject.snakeCase(body)
-      case BODY_KEY_CASE_OPTIONS.PARAM_CASE:
-        return changeCaseObject.paramCase(body)
-      default:
-        return body
-    }
+    return this.metaOptions.getBodyKeyConverter()(body)
   }
 }

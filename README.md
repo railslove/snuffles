@@ -23,13 +23,21 @@ npm install --save snuffles
 import Snuffles from 'snuffles'
 
 export default function myApiWrapper() {
-  const defaultOptions = {
+  const defaultRequestOptions = {
     headers: {
       'X-AUTH-TOKEN': 'my-secret-token'
     }
   }
 
-  const api = new Snuffles('http://base-url.tld', defaultOptions)
+  const metaOptions = {
+    bodyKeyCase: 'CAMEL_CASE'
+  }
+
+  const api = new Snuffles(
+    'http://base-url.tld',
+    defaultRequestOptions,
+    metaOptions
+  )
 
   const user = api.get('/user')
 }
@@ -38,12 +46,32 @@ export default function myApiWrapper() {
 To create a new instance of Snuffles:
 
 ```js
-const api = new Snuffles(baseUrl[, defaultOptions, bodyKeyCase])
+const api = new Snuffles(baseUrl[, defaultRequestOptions, bodyKeyCase])
 ```
 
 - **`baseUrl`**: The base url of the API you want to make requests agains
-- **`defaultOptions`** (_optional_): An Object, containing a set of default options you want to sent in every request, e.g. headers for authentication
-- **`bodyKeyCase`** (_optional_): A string representing the casing in which a request body keys should be sent out. Accepts `SNAKE_CASE` (default), `CAMEL_CASE` and `PARAM_CASE`.
+- **`defaultRequestOptions`** (_optional_): An Object, containing a set of default options you want to sent in every request, e.g. headers for authentication
+- **`metaOptions`** (_optional_): An object containing meta configuration for Snuffles. For possible options, please refer to the list below
+
+### Default Request Options
+
+Snuffles accepts all options that fetch accepts as its `init` parameter ([docs](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)). In fact, snuffles does not validate the options that are passed at all.
+
+### Meta Options
+
+The `metaOptions` object accepts the following configureations:
+
+- **`bodyKeyCase`**: A string defining which casing the keys of a request body for **outgoing requests** should have. Can be either of `SNAKE_CASE`, `CAMEL_CASE` or `PARAM_CASE`.
+
+If no object is passed for `metaOptions`, the following defaul configuration will be used:
+
+```javascript
+{
+  bodyKeyCase: 'SNAKE_CASE'
+}
+```
+
+### Supported HTTP Methods
 
 As of now, Snuffles has wrappers for 5 request methods:
 
@@ -57,10 +85,6 @@ Where
 
 - **`path`**: the path you want that specific request to go to
 - **`options`** (_optional_): An Object containing a set of options you want to merge with the base options on this specific request. Options passed to the wrapper functions are deep-merged, but will override identical keys.
-
-### Options
-
-Snuffles accepts all options that fetch accepts as its `init` parameter ([docs](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch)). In fact, snuffles does not validate the options that are passed at all.
 
 ### Using querystrings
 

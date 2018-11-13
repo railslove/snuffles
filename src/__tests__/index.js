@@ -1,4 +1,4 @@
-import Snuffles from './index.js'
+import Snuffles from '../index.js'
 global.fetch = require('jest-fetch-mock')
 
 const baseUrl = 'http://example.com'
@@ -15,31 +15,32 @@ describe('snuffles', () => {
       expect(() => new Snuffles()).toThrow()
     })
 
-    it('is valid without defaultOptions', () => {
+    it('is valid without defaultRequestOptions', () => {
       const api = new Snuffles(baseUrl)
       expect(api).toBeTruthy()
     })
 
     it('sets the baseUrl and default options', () => {
-      const defaultOptions = {
+      const defaultRequestOptions = {
         headers: {
           'X-AUTH-TOKEN': 'secret'
         }
       }
 
-      const api = new Snuffles(baseUrl, defaultOptions)
+      const api = new Snuffles(baseUrl, defaultRequestOptions)
       expect(api.baseUrl).toEqual(baseUrl)
-      expect(api.defaultOptions).toEqual(defaultOptions)
+      expect(api.defaultRequestOptions).toEqual(defaultRequestOptions)
     })
 
     it('sets the default body formatting', () => {
       const api = new Snuffles(baseUrl)
-      expect(api.bodyKeyCase).toEqual('SNAKE_CASE')
+      expect(api.metaOptions.bodyKeyCase).toEqual('SNAKE_CASE')
     })
 
     it('sets the passed body formatting', () => {
-      const api = new Snuffles(baseUrl, {}, 'CAMEL_CASE')
-      expect(api.bodyKeyCase).toEqual('CAMEL_CASE')
+      const metaOptions = { bodyKeyCase: 'CAMEL_CASE' }
+      const api = new Snuffles(baseUrl, {}, metaOptions)
+      expect(api.metaOptions.bodyKeyCase).toEqual('CAMEL_CASE')
     })
 
     it('does not set a forbidden body formatting', () => {
@@ -81,7 +82,7 @@ describe('snuffles', () => {
         expect(global.fetch).toHaveBeenCalledWith(requestUrl, expect.anything())
       })
 
-      it('merges the passed options with the defaultOptions', () => {
+      it('merges the passed options with the defaultRequestOptions', () => {
         const options = {
           headers: {
             'X-ALLOW-FRAME': 'SAMEORIGIN'
