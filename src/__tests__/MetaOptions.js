@@ -8,14 +8,6 @@ describe('MetaOptions', () => {
       expect(metaOptions).toBeTruthy()
     })
 
-    it('throws an error if no options are passed', () => {
-      expect(() => new MetaOptions()).toThrow()
-    })
-
-    it('throws an error if bodyKeyCase is not present in the options', () => {
-      expect(() => new MetaOptions({})).toThrow()
-    })
-
     it('throws an error if bodyKeyCase is not valid', () => {
       const options = { bodyKeyCase: 'INVALID' }
       expect(() => new MetaOptions(options)).toThrow()

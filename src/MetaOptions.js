@@ -6,17 +6,20 @@ const BODY_KEY_CASE_OPTIONS = {
   PARAM_CASE: changeCaseObject.paramCase
 }
 
+const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE' }
+
 export default class MetaOptions {
   constructor(options) {
-    if (options.bodyKeyCase && !this.isValidBodyKeyCase(options.bodyKeyCase)) {
+    options = {...defaultMetaOptions, ...options}
+    if (!this.isValidBodyKeyCase(options.bodyKeyCase)) {
       throw new Error('This body key formatting option is not allowed.')
     }
-
     this.bodyKeyCase = options.bodyKeyCase
+
     if (typeof options.logger === 'function') {
       this.logger = options.logger
     } else {
-      this.logger = () => {} // noop logger
+      this.logger = () => {} // no-op logger
     }
   }
 

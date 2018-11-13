@@ -44,7 +44,8 @@ describe('snuffles', () => {
     })
 
     it('does not set a forbidden body formatting', () => {
-      expect(() => new Snuffles(baseUrl, {}, 'SOME_CASE')).toThrow()
+      const metaOptions = { bodyKeyCase: 'SOME_CASE' }
+      expect(() => new Snuffles(baseUrl, {}, metaOptions)).toThrow()
     })
   })
 

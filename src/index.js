@@ -5,13 +5,11 @@ import merge from 'deepmerge'
 
 const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
-const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE' }
-
 export default class Snuffles {
   constructor(
     baseUrl,
     defaultRequestOptions = {},
-    metaOptions = defaultMetaOptions
+    metaOptions = {}
   ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
@@ -20,7 +18,7 @@ export default class Snuffles {
     this.baseUrl = baseUrl
     this.defaultRequestOptions = defaultRequestOptions
     this.metaOptions = new MetaOptions(metaOptions)
-    this.log = metaOptions.logger
+    this.log = this.metaOptions.logger
   }
 
   get(path, options = {}) {
