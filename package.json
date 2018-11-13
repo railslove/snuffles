@@ -1,6 +1,6 @@
 {
   "name": "snuffles",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A wrapper around the native fetch function, returning the response body as a camelCased object",
   "author": "railslove",
   "license": "MIT",
@@ -18,11 +18,6 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "prepare": "npm run build"
-  },
-  "peerDependencies": {
-    "prop-types": "15.5.4",
-    "react": "^5.0.0 || 16.0.0",
-    "react-dom": "15.0.0 || 16.0.0"
   },
   "devDependencies": {
     "babel-core": "6.26.3",
