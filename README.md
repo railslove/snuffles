@@ -46,7 +46,7 @@ export default function myApiWrapper() {
 To create a new instance of Snuffles:
 
 ```js
-const api = new Snuffles(baseUrl[, defaultRequestOptions, bodyKeyCase])
+const api = new Snuffles(baseUrl[, defaultRequestOptions, metaOptions])
 ```
 
 - **`baseUrl`**: The base url of the API you want to make requests agains
