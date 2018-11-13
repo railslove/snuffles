@@ -11,7 +11,7 @@ export default class Snuffles {
   constructor(
     baseUrl,
     defaultRequestOptions = {},
-    metaOptions = { ...defaultMetaOptions }
+    metaOptions = defaultMetaOptions
   ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
