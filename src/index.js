@@ -1,10 +1,6 @@
 import changeCaseObject from 'change-case-object'
 import qs from 'query-string'
 import merge from 'deepmerge'
-import createDebug from 'debug'
-
-const requestDebug = createDebug('snuffles:requests')
-const responseDebug = createDebug('snuffles:responses')
 
 const ALLOWED_REQUEST_METHODS = [
   'GET',
@@ -15,13 +11,19 @@ const ALLOWED_REQUEST_METHODS = [
 ]
 
 export default class Snuffles {
-  constructor(baseUrl, defaultOptions = {}) {
+  constructor(baseUrl, defaultOptions = {}, metaOptions = {}) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
     this.baseUrl = baseUrl
     this.defaultOptions = defaultOptions
+
+    if (typeof metaOptions.logger === 'function') {
+      this.log = metaOptions.logger
+    } else {
+      this.log = () => {}
+    }
   }
 
   get(path, options = {}) {
@@ -77,14 +79,14 @@ export default class Snuffles {
     }
 
     const urlWithQueryString = `${url}${queryString}`
-    requestDebug(urlWithQueryString, requestOptions)
+    this.log(urlWithQueryString, requestOptions)
     return fetch(urlWithQueryString, {
       ...requestOptions
     })
       .then(res => {
         if (!res.ok) {
           const error = new Error('API response was not ok.')
-          responseDebug({...res, error})
+          this.log({...res, error})
           error.response = res
           throw error
         }
@@ -94,7 +96,7 @@ export default class Snuffles {
       .then(res => res.json())
       .then(json => {
         const casedResponse = changeCaseObject.camelCase(json)
-        responseDebug(casedResponse)
+        this.log(casedResponse)
         return casedResponse
       })
   }
