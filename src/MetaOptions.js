@@ -16,10 +16,7 @@ export default class MetaOptions {
   }
 
   isValidBodyKeyCase(bodyKeyCase) {
-    if (Object.keys(BODY_KEY_CASE_OPTIONS).indexOf(bodyKeyCase) < 0) {
-      return false
-    }
-    return true
+    return Object.keys(BODY_KEY_CASE_OPTIONS).indexOf(bodyKeyCase) >= 0
   }
 
   getBodyKeyConverter() {
