@@ -1,6 +1,10 @@
 import changeCaseObject from 'change-case-object'
 import qs from 'query-string'
 import merge from 'deepmerge'
+import createDebug from 'debug'
+
+const requestDebug = createDebug('snuffles:requests')
+const responseDebug = createDebug('snuffles:responses')
 
 const ALLOWED_REQUEST_METHODS = [
   'GET',
@@ -72,12 +76,15 @@ export default class Snuffles {
       requestOptions.body = JSON.stringify(snakeCasedBody)
     }
 
-    return fetch(`${url}${queryString}`, {
+    const urlWithQueryString = `${url}${queryString}`
+    requestDebug(urlWithQueryString, requestOptions)
+    return fetch(urlWithQueryString, {
       ...requestOptions
     })
       .then(res => {
         if (!res.ok) {
           const error = new Error('API response was not ok.')
+          responseDebug({...res, error})
           error.response = res
           throw error
         }

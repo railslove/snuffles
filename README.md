@@ -127,6 +127,10 @@ api.post('/users', options)
 // }
 ```
 
+## Logging
+
+The library uses [debug](https://github.com/visionmedia/debug) for logging. Install the `debug` library in your project and add `snuffles:requests`, `snuffles:responses`, or `snuffles:*` (for both) to your debug namespaces config (e.g. `DEBUG=snuffles:*`) in order to see Snuffles log entries appear in your logs. If the logs should get stored anywhere, be careful that you could be exposing sensitive information like passwords, API tokens, etc.
+
 ## License
 
 MIT © [railslove](https://github.com/railslove)
