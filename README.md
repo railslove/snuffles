@@ -166,7 +166,7 @@ For normal browser-based development the network tab in your browser's developer
 
 If you should have custom logging requirements (e.g. if you work with React Native, where you cannot use the network tab in the remote React Native Debugger) you can pass in your custom logger function as an option to the 3rd argument of the `Snuffles()` constructor.
 
-Here is an example using the [debug](https://github.com/visionmedia/debug) as a custom logger:
+Here is an example using [debug](https://github.com/visionmedia/debug) as a custom logger:
 
 ```
 import createDebug from 'debug'
