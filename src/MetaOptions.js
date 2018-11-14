@@ -13,15 +13,18 @@ export default class MetaOptions {
     }
     this.bodyKeyCase = options.bodyKeyCase
 
-    if (typeof options.logger === 'function') {
-      this.logger = options.logger
-    } else {
-      this.logger = () => {} // no-op logger
+    if (!this.isValidLogger(options.logger)) {
+      throw new Error('The provided logger is not a function.')
     }
+    this.logger = options.logger
   }
 
   isValidBodyKeyCase(bodyKeyCase) {
-    return Object.keys(BODY_KEY_CASE_OPTIONS).includes(bodyKeyCase)
+    return bodyKeyCase && Object.keys(BODY_KEY_CASE_OPTIONS).includes(bodyKeyCase)
+  }
+
+  isValidLogger(logger) {
+    return typeof logger === 'function'
   }
 
   getBodyKeyConverter() {

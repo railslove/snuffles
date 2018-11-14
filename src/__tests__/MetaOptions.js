@@ -3,7 +3,7 @@ import MetaOptions from '../MetaOptions'
 describe('MetaOptions', () => {
   describe('Initialisation', () => {
     it('is valid with a valida options object', () => {
-      const options = { bodyKeyCase: 'SNAKE_CASE' }
+      const options = { bodyKeyCase: 'SNAKE_CASE', logger: () => {} }
       const metaOptions = new MetaOptions(options)
       expect(metaOptions).toBeTruthy()
     })
@@ -18,6 +18,11 @@ describe('MetaOptions', () => {
 
     it('throws an error if bodyKeyCase is not valid', () => {
       const options = { bodyKeyCase: 'INVALID' }
+      expect(() => new MetaOptions(options)).toThrow()
+    })
+
+    it('throws an error if logger is not valid', () => {
+      const options = { bodyKeyCase: 'INVALID', logger: 'iamnotalogger' }
       expect(() => new MetaOptions(options)).toThrow()
     })
   })

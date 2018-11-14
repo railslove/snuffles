@@ -5,7 +5,7 @@ import merge from 'deepmerge'
 
 const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
-const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE' }
+const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE', logger: () => {} }
 
 export default class Snuffles {
   constructor(
