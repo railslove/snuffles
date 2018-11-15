@@ -5,13 +5,13 @@ import merge from 'deepmerge'
 
 const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
-const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE' }
+const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE', logger: () => {} }
 
 export default class Snuffles {
   constructor(
     baseUrl,
     defaultRequestOptions = {},
-    metaOptions = defaultMetaOptions
+    metaOptions = {}
   ) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
@@ -19,7 +19,8 @@ export default class Snuffles {
 
     this.baseUrl = baseUrl
     this.defaultRequestOptions = defaultRequestOptions
-    this.metaOptions = new MetaOptions(metaOptions)
+    this.metaOptions = new MetaOptions({...defaultMetaOptions, ...metaOptions})
+    this.log = this.metaOptions.logger
   }
 
   get(path, options = {}) {
@@ -74,20 +75,39 @@ export default class Snuffles {
       requestOptions.body = JSON.stringify(casedBody)
     }
 
-    return fetch(`${url}${queryString}`, {
+    const urlWithQueryString = `${url}${queryString}`
+    this.log('request', urlWithQueryString, requestOptions)
+    return fetch(urlWithQueryString, {
       ...requestOptions
     })
       .then(res => {
         if (!res.ok) {
           const error = new Error('API response was not ok.')
+          this.log({...res, error})
           error.response = res
           throw error
         }
 
         return res
       })
-      .then(res => res.json())
-      .then(json => changeCaseObject.camelCase(json))
+      .then(res =>
+        res.json().then(json => {
+          const headers = {}
+          for (let pair of res.headers.entries()) {
+            headers[pair[0]] = pair[1]
+          }
+          return {
+            status: res.status,
+            headers,
+            body: json
+          }
+        })
+      )
+      .then(parsedResponse => {
+        parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
+        this.log('response', parsedResponse)
+        return parsedResponse.body
+      })
   }
 
   formatBody(body) {

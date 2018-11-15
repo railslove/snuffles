@@ -8,15 +8,23 @@ const BODY_KEY_CASE_OPTIONS = {
 
 export default class MetaOptions {
   constructor(options) {
-    if (!options.bodyKeyCase || !this.isValidBodyKeyCase(options.bodyKeyCase)) {
+    if (!this.isValidBodyKeyCase(options.bodyKeyCase)) {
       throw new Error('This body key formatting option is not allowed.')
     }
-
     this.bodyKeyCase = options.bodyKeyCase
+
+    if (!this.isValidLogger(options.logger)) {
+      throw new Error('The provided logger is not a function.')
+    }
+    this.logger = options.logger
   }
 
   isValidBodyKeyCase(bodyKeyCase) {
-    return Object.keys(BODY_KEY_CASE_OPTIONS).includes(bodyKeyCase)
+    return bodyKeyCase && Object.keys(BODY_KEY_CASE_OPTIONS).includes(bodyKeyCase)
+  }
+
+  isValidLogger(logger) {
+    return typeof logger === 'function'
   }
 
   getBodyKeyConverter() {

@@ -44,7 +44,8 @@ describe('snuffles', () => {
     })
 
     it('does not set a forbidden body formatting', () => {
-      expect(() => new Snuffles(baseUrl, {}, 'SOME_CASE')).toThrow()
+      const metaOptions = { bodyKeyCase: 'SOME_CASE' }
+      expect(() => new Snuffles(baseUrl, {}, metaOptions)).toThrow()
     })
   })
 
@@ -53,7 +54,6 @@ describe('snuffles', () => {
       let api
 
       beforeEach(() => {
-        global.fetch.resetMocks()
         api = new Snuffles(baseUrl)
       })
 
@@ -67,7 +67,6 @@ describe('snuffles', () => {
     describe('with defaults', () => {
       let api
       beforeEach(() => {
-        global.fetch.resetMocks()
         api = new Snuffles(baseUrl, {
           method: 'GET',
           headers: { 'X-AUTH-TOKEN': 'token' }
@@ -199,6 +198,81 @@ describe('snuffles', () => {
             expect.stringContaining('name=sirius', 'animal=dog'),
             expect.anything()
           )
+        })
+      })
+    })
+
+    describe('with logger', () => {
+      describe('single logger', () => {
+        it('should call the logger with the requst and response infos', () => {
+          global.fetch.mockResponseOnce(JSON.stringify({}))
+
+          const mockLogger = jest.fn()
+
+          const api = new Snuffles(baseUrl, {
+            method: 'GET',
+            headers: { 'X-AUTH-TOKEN': 'token' }
+          }, { logger: mockLogger })
+
+          api.request(requestPath).then(() => {
+            expect(mockLogger.mock.calls).toEqual([
+              [
+                'request',
+                'http://example.com/users',
+                {
+                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  method: 'GET'
+                }
+              ],
+              [
+                'response',
+                {
+                  body: {},
+                  headers: { 'content-type': 'text/plain;charset=UTF-8' },
+                  status: 200
+                }
+              ]
+            ])
+          })
+        })
+      })
+
+      describe('2 separate loggers', () => {
+        it('should call the individual loggers with the requst and response infos', () => {
+          global.fetch.mockResponseOnce(JSON.stringify({}))
+
+          const mockLoggers = {
+            request: jest.fn(),
+            response: jest.fn()
+          }
+
+          const api = new Snuffles(
+            baseUrl,
+            {
+              method: 'GET',
+              headers: { 'X-AUTH-TOKEN': 'token' }
+            },
+            {
+              logger: (type, ...data) => mockLoggers[type](...data)
+            }
+          )
+
+          api.request(requestPath).then(() => {
+            expect(mockLoggers.request).toHaveBeenCalledWith(
+              'http://example.com/users',
+              {
+                headers: { 'X-AUTH-TOKEN': 'token' },
+                method: 'GET'
+              }
+            )
+            expect(mockLoggers.response).toHaveBeenCalledWith(
+              {
+                body: {},
+                headers: { 'content-type': 'text/plain;charset=UTF-8' },
+                status: 200
+              }
+            )
+          })
         })
       })
     })
