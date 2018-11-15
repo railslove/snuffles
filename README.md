@@ -62,12 +62,14 @@ Snuffles accepts all options that fetch accepts as its `init` parameter ([docs](
 The `metaOptions` object accepts the following configureations:
 
 - **`bodyKeyCase`**: A string defining which casing the keys of a request body for **outgoing requests** should have. Can be either of `SNAKE_CASE`, `CAMEL_CASE` or `PARAM_CASE`.
+- **`logger`**: A custom logger function (see [Logging](#logging) section)
 
 If no object is passed for `metaOptions`, the following defaul configuration will be used:
 
 ```javascript
 {
-  bodyKeyCase: 'SNAKE_CASE'
+  bodyKeyCase: 'SNAKE_CASE',
+  logger: () => {} // no-op logger
 }
 ```
 
