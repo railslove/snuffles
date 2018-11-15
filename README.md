@@ -182,7 +182,7 @@ const apiClient = new Snuffles(
 The first argument of each log call is always the `type` of the log entry (either `'request'` or `'response'`), so you can take advantage of this to log them differently.  E.g. into separate logging namespaces:
 
 ```js
-{ logger: (type, ...data) => createDebug('api:${type}')(...data) }
+{ logger: (type, ...data) => createDebug(`api:${type}`)(...data) }
 ```
 
 Beware: if the logs should get persisted/streamed to anywhere, be careful that you could be exposing sensitive information like passwords, API tokens, which are part of the logged HTTP requests.
