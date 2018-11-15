@@ -168,7 +168,7 @@ If you should have custom logging requirements (e.g. if you work with React Nati
 
 Here is an example using [debug](https://github.com/visionmedia/debug) as a custom logger:
 
-```
+```js
 import createDebug from 'debug'
 const debug = createDebug('api')
 
@@ -180,7 +180,8 @@ const apiClient = new Snuffles(
 ```
 
 The first argument of each log call is always the `type` of the log entry (either `'request'` or `'response'`), so you can take advantage of this to log them differently.  E.g. into separate logging namespaces:
-```
+
+```js
 { logger: (type, ...data) => createDebug('api:${type}')(...data) }
 ```
 
