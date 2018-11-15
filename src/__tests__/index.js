@@ -203,35 +203,76 @@ describe('snuffles', () => {
     })
 
     describe('with logger', () => {
-      it('should call the logger with the requst and response infos', () => {
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+      describe('single logger', () => {
+        it('should call the logger with the requst and response infos', () => {
+          global.fetch.mockResponseOnce(JSON.stringify({}))
 
-        const mockLogger = jest.fn()
+          const mockLogger = jest.fn()
 
-        const api = new Snuffles(baseUrl, {
-          method: 'GET',
-          headers: { 'X-AUTH-TOKEN': 'token' }
-        }, { logger: mockLogger })
+          const api = new Snuffles(baseUrl, {
+            method: 'GET',
+            headers: { 'X-AUTH-TOKEN': 'token' }
+          }, { logger: mockLogger })
 
-        api.request(requestPath).then(() => {
-          expect(mockLogger.mock.calls).toEqual([
-            [
-              'request',
+          api.request(requestPath).then(() => {
+            expect(mockLogger.mock.calls).toEqual([
+              [
+                'request',
+                'http://example.com/users',
+                {
+                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  method: 'GET'
+                }
+              ],
+              [
+                'response',
+                {
+                  body: {},
+                  headers: { 'content-type': 'text/plain;charset=UTF-8' },
+                  status: 200
+                }
+              ]
+            ])
+          })
+        })
+      })
+
+      describe('2 separate loggers', () => {
+        it('should call the individual loggers with the requst and response infos', () => {
+          global.fetch.mockResponseOnce(JSON.stringify({}))
+
+          const mockLoggers = {
+            request: jest.fn(),
+            response: jest.fn()
+          }
+
+          const api = new Snuffles(
+            baseUrl,
+            {
+              method: 'GET',
+              headers: { 'X-AUTH-TOKEN': 'token' }
+            },
+            {
+              logger: (type, ...data) => mockLoggers[type](...data)
+            }
+          )
+
+          api.request(requestPath).then(() => {
+            expect(mockLoggers.request).toHaveBeenCalledWith(
               'http://example.com/users',
               {
                 headers: { 'X-AUTH-TOKEN': 'token' },
                 method: 'GET'
               }
-            ],
-            [
-              'response',
+            )
+            expect(mockLoggers.response).toHaveBeenCalledWith(
               {
                 body: {},
                 headers: { 'content-type': 'text/plain;charset=UTF-8' },
                 status: 200
               }
-            ]
-          ])
+            )
+          })
         })
       })
     })
