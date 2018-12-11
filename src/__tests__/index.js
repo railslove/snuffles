@@ -8,6 +8,10 @@ const defaultHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json'
 }
+const defaultResponseHeaders = {
+  'Content-Type': 'application/json',
+  'Content-Length': 100
+}
 
 describe('snuffles', () => {
   beforeEach(() => {
@@ -106,7 +110,7 @@ describe('snuffles', () => {
 
         global.fetch.mockResponseOnce(JSON.stringify({}), {
           status: 200,
-          headers: { 'Content-Type': 'application/json' }
+          headers: defaultResponseHeaders
         })
         api.request(requestPath, options)
 
@@ -120,7 +124,7 @@ describe('snuffles', () => {
       it('merges the passed url with the baseUrl', () => {
         global.fetch.mockResponseOnce(JSON.stringify({}), {
           status: 200,
-          headers: { 'Content-Type': 'application/json' }
+          headers: defaultResponseHeaders
         })
         api.request(requestPath)
 
@@ -141,7 +145,7 @@ describe('snuffles', () => {
             user_name: 'user',
             secret_token: '123'
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } }
+          { status: 200, headers: defaultResponseHeaders }
         )
 
         api.request(requestPath).then(res => {
@@ -164,7 +168,7 @@ describe('snuffles', () => {
 
         global.fetch.mockResponseOnce(JSON.stringify({}), {
           status: 200,
-          headers: { 'Content-Type': 'application/json' }
+          headers: defaultResponseHeaders
         })
         api.request(requestPath, options)
         const jsonRequestBody = JSON.parse(global.fetch.mock.calls[0][1].body)
@@ -203,20 +207,27 @@ describe('snuffles', () => {
           )
         })
       })
-    })
 
-    describe('without response body', () => {
-      let api
-      beforeEach(() => {
-        api = new Snuffles(baseUrl, {
-          method: 'GET',
-          headers: { 'X-AUTH-TOKEN': 'token' }
+      describe('not json body', () => {
+        it('returns empty body when not application/json response', async () => {
+          global.fetch.mockResponseOnce(null, {
+            headers: {
+              'Content-Type': 'application/pdf',
+              'Content-Length': 100
+            }
+          })
+          await expect(api.request(requestPath)).resolves.toMatchObject({})
         })
-      })
 
-      it('returns empty body', async () => {
-        global.fetch.mockResponseOnce()
-        await expect(api.request(requestPath)).resolves.toMatchObject({})
+        it('returns empty body empty', async () => {
+          global.fetch.mockResponseOnce(null, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': 0
+            }
+          })
+          await expect(api.request(requestPath)).resolves.toMatchObject({})
+        })
       })
     })
 
@@ -253,7 +264,9 @@ describe('snuffles', () => {
                 'response',
                 {
                   body: {},
-                  headers: { 'content-type': 'text/plain;charset=UTF-8' },
+                  headers: {
+                    map: { 'content-type': 'text/plain;charset=UTF-8' }
+                  },
                   status: 200
                 }
               ]
@@ -295,7 +308,7 @@ describe('snuffles', () => {
             )
             expect(mockLoggers.response).toHaveBeenCalledWith({
               body: {},
-              headers: { 'content-type': 'text/plain;charset=UTF-8' },
+              headers: { map: { 'content-type': 'text/plain;charset=UTF-8' } },
               status: 200
             })
           })

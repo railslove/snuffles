@@ -97,23 +97,16 @@ export default class Snuffles {
       })
       .then(res => {
         const { status } = res
-        const headers = {}
-        res.headers.forEach((value, key) => (headers[key] = value))
+        const resultBase = { status, headers: res.headers, body: {} }
 
-        const resultBase = { status, headers, body: {} }
+        const contentLength = res.headers.get('Content-Length')
+        const contentType = res.headers.get('Content-Type')
 
-        return res
-          .json()
-          .then(json => ({ ...resultBase, body: json }))
-          .catch(() => {
-            if (headers['Content-Cype'] === 'application/json') {
-              this.log('response does not have a valid json body')
-            } else {
-              this.log('response was not of accepted type application/json')
-            }
+        if (contentLength <= 1 || contentType !== 'application/json') {
+          return resultBase
+        }
 
-            return resultBase
-          })
+        return res.json().then(json => ({ ...resultBase, body: json }))
       })
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
