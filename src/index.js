@@ -13,8 +13,14 @@ export default class Snuffles {
       throw new Error('baseUrl has to be set')
     }
 
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      ...defaultRequestOptions.headers
+    }
+
     this.baseUrl = baseUrl
-    this.defaultRequestOptions = defaultRequestOptions
+    this.defaultRequestOptions = { ...defaultRequestOptions, headers }
     this.metaOptions = new MetaOptions({
       ...defaultMetaOptions,
       ...metaOptions
@@ -89,35 +95,24 @@ export default class Snuffles {
 
         return res
       })
-      .then(res =>
-        res
-          .json()
-          .then(json => {
-            const headers = {}
-            for (let pair of res.headers.entries()) {
-              headers[pair[0]] = pair[1]
-            }
+      .then(res => {
+        const headers = {}
+        for (let pair of res.headers.entries()) {
+          headers[pair[0]] = pair[1]
+        }
+
+        if (headers['content-type'] === 'application/json') {
+          return res.json().then(json => {
             return {
               status: res.status,
               headers,
               body: json
             }
           })
-          .catch(err => {
-            if (err.message.includes('Unexpected end of JSON input')) {
-              const headers = {}
-              for (let pair of res.headers.entries()) {
-                headers[pair[0]] = pair[1]
-              }
-              return {
-                status: res.status,
-                headers,
-                body: {}
-              }
-            }
-            return err
-          })
-      )
+        } else {
+          return { status: res.status, headers, body: {} }
+        }
+      })
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
         this.log('response', parsedResponse)

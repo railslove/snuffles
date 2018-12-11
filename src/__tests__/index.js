@@ -4,6 +4,10 @@ global.fetch = require('jest-fetch-mock')
 const baseUrl = 'http://example.com'
 const requestPath = '/users'
 const requestUrl = baseUrl + requestPath
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json'
+}
 
 describe('snuffles', () => {
   beforeEach(() => {
@@ -23,7 +27,8 @@ describe('snuffles', () => {
     it('sets the baseUrl and default options', () => {
       const defaultRequestOptions = {
         headers: {
-          'X-AUTH-TOKEN': 'secret'
+          'X-AUTH-TOKEN': 'secret',
+          ...defaultHeaders
         }
       }
 
@@ -84,19 +89,25 @@ describe('snuffles', () => {
       it('merges the passed options with the defaultRequestOptions', () => {
         const options = {
           headers: {
-            'X-ALLOW-FRAME': 'SAMEORIGIN'
+            'X-ALLOW-FRAME': 'SAMEORIGIN',
+            Accept: 'application/pdf'
           }
         }
 
         const mergedOptions = {
           method: 'GET',
           headers: {
+            ...defaultHeaders,
             'X-ALLOW-FRAME': 'SAMEORIGIN',
-            'X-AUTH-TOKEN': 'token'
+            'X-AUTH-TOKEN': 'token',
+            Accept: 'application/pdf'
           }
         }
 
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+        global.fetch.mockResponseOnce(JSON.stringify({}), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        })
         api.request(requestPath, options)
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
@@ -107,7 +118,10 @@ describe('snuffles', () => {
       })
 
       it('merges the passed url with the baseUrl', () => {
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+        global.fetch.mockResponseOnce(JSON.stringify({}), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        })
         api.request(requestPath)
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
@@ -121,27 +135,13 @@ describe('snuffles', () => {
         })
       })
 
-      it('sets the defined options', () => {
-        const options = {
-          headers: {
-            'X-AUTH-TOKEN': 'secret'
-          }
-        }
-        global.fetch.mockResponseOnce(JSON.stringify({}))
-        api.request(requestPath, options)
-
-        expect(global.fetch).toHaveBeenCalledWith(
-          requestUrl,
-          expect.objectContaining(options)
-        )
-      })
-
       it('returns the response body as a camelCased object', () => {
         global.fetch.mockResponseOnce(
           JSON.stringify({
             user_name: 'user',
             secret_token: '123'
-          })
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
         )
 
         api.request(requestPath).then(res => {
@@ -162,7 +162,10 @@ describe('snuffles', () => {
 
         const expectedBody = { user_name: 'Sirius', still_alive: false }
 
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+        global.fetch.mockResponseOnce(JSON.stringify({}), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        })
         api.request(requestPath, options)
         const jsonRequestBody = JSON.parse(global.fetch.mock.calls[0][1].body)
 
@@ -239,7 +242,10 @@ describe('snuffles', () => {
                 'request',
                 'http://example.com/users',
                 {
-                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  headers: {
+                    'X-AUTH-TOKEN': 'token',
+                    ...defaultHeaders
+                  },
                   method: 'GET'
                 }
               ],
@@ -280,7 +286,10 @@ describe('snuffles', () => {
             expect(mockLoggers.request).toHaveBeenCalledWith(
               'http://example.com/users',
               {
-                headers: { 'X-AUTH-TOKEN': 'token' },
+                headers: {
+                  'X-AUTH-TOKEN': 'token',
+                  ...defaultHeaders
+                },
                 method: 'GET'
               }
             )
