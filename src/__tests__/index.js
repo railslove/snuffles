@@ -228,6 +228,9 @@ describe('snuffles', () => {
                 'response',
                 {
                   body: {},
+                  headers: {
+                    map: { 'content-type': 'text/plain;charset=UTF-8' }
+                  },
                   status: 200
                 }
               ]
@@ -267,6 +270,9 @@ describe('snuffles', () => {
             expect(mockLoggers.response).toHaveBeenCalledWith(
               {
                 body: {},
+                headers: {
+                  map: { 'content-type': 'text/plain;charset=UTF-8' }
+                },
                 status: 200
               }
             )

@@ -91,7 +91,11 @@ export default class Snuffles {
         return res
       })
       .then(res =>
-        res.json().then(json => ({ status: res.status, body: json }))
+        res.json().then(json => ({
+          status: res.status,
+          headers: res.headers,
+          body: json
+        }))
       )
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
