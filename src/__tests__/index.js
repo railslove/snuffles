@@ -222,7 +222,7 @@ describe('snuffles', () => {
 
     describe('with logger', () => {
       describe('single logger', () => {
-        it('should call the logger with the requst and response infos', () => {
+        it('should call the logger with the requst and response infos', async () => {
           global.fetch.mockResponseOnce(JSON.stringify({}))
 
           const mockLogger = jest.fn()
@@ -236,7 +236,7 @@ describe('snuffles', () => {
             { logger: mockLogger }
           )
 
-          api.request(requestPath).then(() => {
+          await api.request(requestPath).then(() => {
             expect(mockLogger.mock.calls).toEqual([
               [
                 'request',
@@ -263,7 +263,7 @@ describe('snuffles', () => {
       })
 
       describe('2 separate loggers', () => {
-        it('should call the individual loggers with the requst and response infos', () => {
+        it('should call the individual loggers with the requst and response infos', async () => {
           global.fetch.mockResponseOnce(JSON.stringify({}))
 
           const mockLoggers = {
@@ -282,7 +282,7 @@ describe('snuffles', () => {
             }
           )
 
-          api.request(requestPath).then(() => {
+          await api.request(requestPath).then(() => {
             expect(mockLoggers.request).toHaveBeenCalledWith(
               'http://example.com/users',
               {

@@ -58,7 +58,7 @@ export default class Snuffles {
 
   /**
    * @param  {string} path the path of the request
-   * @param  {Object} options optional options, sepcific for this single request
+   * @param  {Object} options optional options, specific for this single request
    * @return {Object} res camelCased response
    */
   request(path, options = {}) {
@@ -96,22 +96,24 @@ export default class Snuffles {
         return res
       })
       .then(res => {
+        const { status } = res
         const headers = {}
-        for (let pair of res.headers.entries()) {
-          headers[pair[0]] = pair[1]
-        }
+        res.headers.forEach((value, key) => (headers[key] = value))
 
-        if (headers['content-type'] === 'application/json') {
-          return res.json().then(json => {
-            return {
-              status: res.status,
-              headers,
-              body: json
+        const resultBase = { status, headers, body: {} }
+
+        return res
+          .json()
+          .then(json => ({ ...resultBase, body: json }))
+          .catch(() => {
+            if (headers['Content-Cype'] === 'application/json') {
+              this.log('response does not have a valid json body')
+            } else {
+              this.log('response was not of accepted type application/json')
             }
+
+            return resultBase
           })
-        } else {
-          return { status: res.status, headers, body: {} }
-        }
       })
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
