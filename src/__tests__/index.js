@@ -202,6 +202,21 @@ describe('snuffles', () => {
       })
     })
 
+    describe('without response body', () => {
+      let api
+      beforeEach(() => {
+        api = new Snuffles(baseUrl, {
+          method: 'GET',
+          headers: { 'X-AUTH-TOKEN': 'token' }
+        })
+      })
+
+      it('returns empty body', async () => {
+        global.fetch.mockResponseOnce()
+        await expect(api.request(requestPath)).resolves.toMatchObject({})
+      })
+    })
+
     describe('with logger', () => {
       describe('single logger', () => {
         it('should call the logger with the requst and response infos', () => {
@@ -209,10 +224,14 @@ describe('snuffles', () => {
 
           const mockLogger = jest.fn()
 
-          const api = new Snuffles(baseUrl, {
-            method: 'GET',
-            headers: { 'X-AUTH-TOKEN': 'token' }
-          }, { logger: mockLogger })
+          const api = new Snuffles(
+            baseUrl,
+            {
+              method: 'GET',
+              headers: { 'X-AUTH-TOKEN': 'token' }
+            },
+            { logger: mockLogger }
+          )
 
           api.request(requestPath).then(() => {
             expect(mockLogger.mock.calls).toEqual([
@@ -265,13 +284,11 @@ describe('snuffles', () => {
                 method: 'GET'
               }
             )
-            expect(mockLoggers.response).toHaveBeenCalledWith(
-              {
-                body: {},
-                headers: { 'content-type': 'text/plain;charset=UTF-8' },
-                status: 200
-              }
-            )
+            expect(mockLoggers.response).toHaveBeenCalledWith({
+              body: {},
+              headers: { 'content-type': 'text/plain;charset=UTF-8' },
+              status: 200
+            })
           })
         })
       })

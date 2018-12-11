@@ -8,18 +8,17 @@ const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE', logger: () => {} }
 
 export default class Snuffles {
-  constructor(
-    baseUrl,
-    defaultRequestOptions = {},
-    metaOptions = {}
-  ) {
+  constructor(baseUrl, defaultRequestOptions = {}, metaOptions = {}) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
     this.baseUrl = baseUrl
     this.defaultRequestOptions = defaultRequestOptions
-    this.metaOptions = new MetaOptions({...defaultMetaOptions, ...metaOptions})
+    this.metaOptions = new MetaOptions({
+      ...defaultMetaOptions,
+      ...metaOptions
+    })
     this.log = this.metaOptions.logger
   }
 
@@ -83,7 +82,7 @@ export default class Snuffles {
       .then(res => {
         if (!res.ok) {
           const error = new Error('API response was not ok.')
-          this.log({...res, error})
+          this.log({ ...res, error })
           error.response = res
           throw error
         }
@@ -91,17 +90,33 @@ export default class Snuffles {
         return res
       })
       .then(res =>
-        res.json().then(json => {
-          const headers = {}
-          for (let pair of res.headers.entries()) {
-            headers[pair[0]] = pair[1]
-          }
-          return {
-            status: res.status,
-            headers,
-            body: json
-          }
-        })
+        res
+          .json()
+          .then(json => {
+            const headers = {}
+            for (let pair of res.headers.entries()) {
+              headers[pair[0]] = pair[1]
+            }
+            return {
+              status: res.status,
+              headers,
+              body: json
+            }
+          })
+          .catch(err => {
+            if (err.message.includes('Unexpected end of JSON input')) {
+              const headers = {}
+              for (let pair of res.headers.entries()) {
+                headers[pair[0]] = pair[1]
+              }
+              return {
+                status: res.status,
+                headers,
+                body: {}
+              }
+            }
+            return err
+          })
       )
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
