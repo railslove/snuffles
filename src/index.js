@@ -83,7 +83,7 @@ export default class Snuffles {
       .then(res => {
         if (!res.ok) {
           const error = new Error('API response was not ok.')
-          this.log({...res, error})
+          this.log('response', error.toString(), res)
           error.response = res
           throw error
         }
