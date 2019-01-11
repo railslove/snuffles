@@ -273,6 +273,35 @@ describe('snuffles', () => {
             ])
           })
         })
+
+        it('should log an error response', () => {
+          global.fetch.mockResponseOnce(JSON.stringify({}), { status: 404 })
+
+          const mockLogger = jest.fn()
+
+          const api = new Snuffles(baseUrl, {
+            method: 'GET',
+            headers: { 'X-AUTH-TOKEN': 'token' }
+          }, { logger: mockLogger })
+
+          api.request(requestPath).catch(() => {
+            expect(mockLogger.mock.calls).toEqual([
+              [
+                'request',
+                'http://example.com/users',
+                {
+                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  method: 'GET'
+                }
+              ],
+              [
+                'response',
+                'Error: API response was not ok.',
+                expect.any(Response)
+              ]
+            ])
+          })
+        })
       })
 
       describe('2 separate loggers', () => {
