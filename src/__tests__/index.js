@@ -212,8 +212,8 @@ describe('snuffles', () => {
         it('returns empty body when not application/json response', async () => {
           global.fetch.mockResponseOnce(null, {
             headers: {
-              'Content-Type': 'application/pdf',
-              'Content-Length': 100
+              ...defaultResponseHeaders,
+              'Content-Type': 'application/pdf'
             }
           })
           await expect(api.request(requestPath)).resolves.toMatchObject({})
@@ -279,10 +279,14 @@ describe('snuffles', () => {
 
           const mockLogger = jest.fn()
 
-          const api = new Snuffles(baseUrl, {
-            method: 'GET',
-            headers: { 'X-AUTH-TOKEN': 'token' }
-          }, { logger: mockLogger })
+          const api = new Snuffles(
+            baseUrl,
+            {
+              method: 'GET',
+              headers: { 'X-AUTH-TOKEN': 'token' }
+            },
+            { logger: mockLogger }
+          )
 
           api.request(requestPath).catch(() => {
             expect(mockLogger.mock.calls).toEqual([
@@ -290,7 +294,10 @@ describe('snuffles', () => {
                 'request',
                 'http://example.com/users',
                 {
-                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  headers: {
+                    ...defaultHeaders,
+                    'X-AUTH-TOKEN': 'token'
+                  },
                   method: 'GET'
                 }
               ],

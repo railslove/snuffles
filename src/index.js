@@ -99,8 +99,8 @@ export default class Snuffles {
         const { status } = res
         const resultBase = { status, headers: res.headers, body: {} }
 
-        const contentLength = res.headers.get('Content-Length')
-        const contentType = res.headers.get('Content-Type')
+        const contentLength = res.headers['map']['content-length']
+        const contentType = res.headers['map']['content-type']
 
         if (contentLength <= 1 || contentType !== 'application/json') {
           return resultBase
