@@ -4,6 +4,14 @@ global.fetch = require('jest-fetch-mock')
 const baseUrl = 'http://example.com'
 const requestPath = '/users'
 const requestUrl = baseUrl + requestPath
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json'
+}
+const defaultResponseHeaders = {
+  'Content-Type': 'application/json',
+  'Content-Length': 100
+}
 
 describe('snuffles', () => {
   beforeEach(() => {
@@ -23,7 +31,8 @@ describe('snuffles', () => {
     it('sets the baseUrl and default options', () => {
       const defaultRequestOptions = {
         headers: {
-          'X-AUTH-TOKEN': 'secret'
+          'X-AUTH-TOKEN': 'secret',
+          ...defaultHeaders
         }
       }
 
@@ -84,19 +93,25 @@ describe('snuffles', () => {
       it('merges the passed options with the defaultRequestOptions', () => {
         const options = {
           headers: {
-            'X-ALLOW-FRAME': 'SAMEORIGIN'
+            'X-ALLOW-FRAME': 'SAMEORIGIN',
+            Accept: 'application/pdf'
           }
         }
 
         const mergedOptions = {
           method: 'GET',
           headers: {
+            ...defaultHeaders,
             'X-ALLOW-FRAME': 'SAMEORIGIN',
-            'X-AUTH-TOKEN': 'token'
+            'X-AUTH-TOKEN': 'token',
+            Accept: 'application/pdf'
           }
         }
 
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+        global.fetch.mockResponseOnce(JSON.stringify({}), {
+          status: 200,
+          headers: defaultResponseHeaders
+        })
         api.request(requestPath, options)
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
@@ -107,7 +122,10 @@ describe('snuffles', () => {
       })
 
       it('merges the passed url with the baseUrl', () => {
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+        global.fetch.mockResponseOnce(JSON.stringify({}), {
+          status: 200,
+          headers: defaultResponseHeaders
+        })
         api.request(requestPath)
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
@@ -121,27 +139,13 @@ describe('snuffles', () => {
         })
       })
 
-      it('sets the defined options', () => {
-        const options = {
-          headers: {
-            'X-AUTH-TOKEN': 'secret'
-          }
-        }
-        global.fetch.mockResponseOnce(JSON.stringify({}))
-        api.request(requestPath, options)
-
-        expect(global.fetch).toHaveBeenCalledWith(
-          requestUrl,
-          expect.objectContaining(options)
-        )
-      })
-
       it('returns the response body as a camelCased object', () => {
         global.fetch.mockResponseOnce(
           JSON.stringify({
             user_name: 'user',
             secret_token: '123'
-          })
+          }),
+          { status: 200, headers: defaultResponseHeaders }
         )
 
         api.request(requestPath).then(res => {
@@ -162,7 +166,10 @@ describe('snuffles', () => {
 
         const expectedBody = { user_name: 'Sirius', still_alive: false }
 
-        global.fetch.mockResponseOnce(JSON.stringify({}))
+        global.fetch.mockResponseOnce(JSON.stringify({}), {
+          status: 200,
+          headers: defaultResponseHeaders
+        })
         api.request(requestPath, options)
         const jsonRequestBody = JSON.parse(global.fetch.mock.calls[0][1].body)
 
@@ -200,27 +207,56 @@ describe('snuffles', () => {
           )
         })
       })
+
+      describe('not json body', () => {
+        it('returns empty body when not application/json response', async () => {
+          global.fetch.mockResponseOnce(null, {
+            headers: {
+              ...defaultResponseHeaders,
+              'Content-Type': 'application/pdf'
+            }
+          })
+          await expect(api.request(requestPath)).resolves.toMatchObject({})
+        })
+
+        it('returns empty body empty', async () => {
+          global.fetch.mockResponseOnce(null, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': 0
+            }
+          })
+          await expect(api.request(requestPath)).resolves.toMatchObject({})
+        })
+      })
     })
 
     describe('with logger', () => {
       describe('single logger', () => {
-        it('should call the logger with the requst and response infos', () => {
+        it('should call the logger with the requst and response infos', async () => {
           global.fetch.mockResponseOnce(JSON.stringify({}))
 
           const mockLogger = jest.fn()
 
-          const api = new Snuffles(baseUrl, {
-            method: 'GET',
-            headers: { 'X-AUTH-TOKEN': 'token' }
-          }, { logger: mockLogger })
+          const api = new Snuffles(
+            baseUrl,
+            {
+              method: 'GET',
+              headers: { 'X-AUTH-TOKEN': 'token' }
+            },
+            { logger: mockLogger }
+          )
 
-          api.request(requestPath).then(() => {
+          await api.request(requestPath).then(() => {
             expect(mockLogger.mock.calls).toEqual([
               [
                 'request',
                 'http://example.com/users',
                 {
-                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  headers: {
+                    'X-AUTH-TOKEN': 'token',
+                    ...defaultHeaders
+                  },
                   method: 'GET'
                 }
               ],
@@ -243,10 +279,14 @@ describe('snuffles', () => {
 
           const mockLogger = jest.fn()
 
-          const api = new Snuffles(baseUrl, {
-            method: 'GET',
-            headers: { 'X-AUTH-TOKEN': 'token' }
-          }, { logger: mockLogger })
+          const api = new Snuffles(
+            baseUrl,
+            {
+              method: 'GET',
+              headers: { 'X-AUTH-TOKEN': 'token' }
+            },
+            { logger: mockLogger }
+          )
 
           api.request(requestPath).catch(() => {
             expect(mockLogger.mock.calls).toEqual([
@@ -254,7 +294,10 @@ describe('snuffles', () => {
                 'request',
                 'http://example.com/users',
                 {
-                  headers: { 'X-AUTH-TOKEN': 'token' },
+                  headers: {
+                    ...defaultHeaders,
+                    'X-AUTH-TOKEN': 'token'
+                  },
                   method: 'GET'
                 }
               ],
@@ -269,7 +312,7 @@ describe('snuffles', () => {
       })
 
       describe('2 separate loggers', () => {
-        it('should call the individual loggers with the requst and response infos', () => {
+        it('should call the individual loggers with the requst and response infos', async () => {
           global.fetch.mockResponseOnce(JSON.stringify({}))
 
           const mockLoggers = {
@@ -288,23 +331,22 @@ describe('snuffles', () => {
             }
           )
 
-          api.request(requestPath).then(() => {
+          await api.request(requestPath).then(() => {
             expect(mockLoggers.request).toHaveBeenCalledWith(
               'http://example.com/users',
               {
-                headers: { 'X-AUTH-TOKEN': 'token' },
+                headers: {
+                  'X-AUTH-TOKEN': 'token',
+                  ...defaultHeaders
+                },
                 method: 'GET'
               }
             )
-            expect(mockLoggers.response).toHaveBeenCalledWith(
-              {
-                body: {},
-                headers: {
-                  map: { 'content-type': 'text/plain;charset=UTF-8' }
-                },
-                status: 200
-              }
-            )
+            expect(mockLoggers.response).toHaveBeenCalledWith({
+              body: {},
+              headers: { map: { 'content-type': 'text/plain;charset=UTF-8' } },
+              status: 200
+            })
           })
         })
       })

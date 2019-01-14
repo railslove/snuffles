@@ -8,18 +8,23 @@ const ALLOWED_REQUEST_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 const defaultMetaOptions = { bodyKeyCase: 'SNAKE_CASE', logger: () => {} }
 
 export default class Snuffles {
-  constructor(
-    baseUrl,
-    defaultRequestOptions = {},
-    metaOptions = {}
-  ) {
+  constructor(baseUrl, defaultRequestOptions = {}, metaOptions = {}) {
     if (!baseUrl) {
       throw new Error('baseUrl has to be set')
     }
 
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      ...defaultRequestOptions.headers
+    }
+
     this.baseUrl = baseUrl
-    this.defaultRequestOptions = defaultRequestOptions
-    this.metaOptions = new MetaOptions({...defaultMetaOptions, ...metaOptions})
+    this.defaultRequestOptions = { ...defaultRequestOptions, headers }
+    this.metaOptions = new MetaOptions({
+      ...defaultMetaOptions,
+      ...metaOptions
+    })
     this.log = this.metaOptions.logger
   }
 
@@ -53,7 +58,7 @@ export default class Snuffles {
 
   /**
    * @param  {string} path the path of the request
-   * @param  {Object} options optional options, sepcific for this single request
+   * @param  {Object} options optional options, specific for this single request
    * @return {Object} res camelCased response
    */
   request(path, options = {}) {
@@ -90,13 +95,19 @@ export default class Snuffles {
 
         return res
       })
-      .then(res =>
-        res.json().then(json => ({
-          status: res.status,
-          headers: res.headers,
-          body: json
-        }))
-      )
+      .then(res => {
+        const { status } = res
+        const resultBase = { status, headers: res.headers, body: {} }
+
+        const contentLength = res.headers['map']['content-length']
+        const contentType = res.headers['map']['content-type']
+
+        if (contentLength <= 1 || contentType !== 'application/json') {
+          return resultBase
+        }
+
+        return res.json().then(json => ({ ...resultBase, body: json }))
+      })
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
         this.log('response', parsedResponse)
