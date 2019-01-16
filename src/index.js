@@ -95,18 +95,17 @@ export default class Snuffles {
 
         return res
       })
-      .then(res => {
+      .then(async res => {
         const { status } = res
         const resultBase = { status, headers: res.headers, body: {} }
 
-        const contentLength = res.headers['map']['content-length']
-        const contentType = res.headers['map']['content-type']
-
-        if (contentLength <= 1 || contentType !== 'application/json') {
-          return resultBase
+        try {
+          const parsedRes = await res.json()
+          resultBase.body = parsedRes
+        } catch (error) {
+          resultBase.body = {}
         }
-
-        return res.json().then(json => ({ ...resultBase, body: json }))
+        return resultBase
       })
       .then(parsedResponse => {
         parsedResponse.body = changeCaseObject.camelCase(parsedResponse.body)
